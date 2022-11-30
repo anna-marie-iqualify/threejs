@@ -29,8 +29,19 @@ $(document).ready(function () {
     return cube;
   }
 
+  // fix pixelation of objects.
+  function resizeRendererToDisplaySize(renderer) {
+    const canvas = renderer.domElement;
+    const width = canvas.clientWidth;
+    const height = canvas.clientHeight;
+    const needResize = canvas.width !== width || canvas.height !== height;
+    if (needResize) {
+      renderer.setSize(width, height, false);
+    }
+    return needResize;
+  }
+
   function main() {
-    console.log("hello");
     const canvas = $("#scene").get(0);
     const renderer = new THREE.WebGLRenderer({ canvas });
 
@@ -54,6 +65,13 @@ $(document).ready(function () {
 
     function animate(time) {
       time *= 0.001; // convert time to seconds
+
+      // resize window if needed
+      if (resizeRendererToDisplaySize(renderer)) {
+        const canvas = renderer.domElement;
+        camera.aspect = canvas.clientWidth / canvas.clientHeight;
+        camera.updateProjectionMatrix();
+      }
 
       cubes.forEach(function (cube, index) {
         const speed = index + 1;
