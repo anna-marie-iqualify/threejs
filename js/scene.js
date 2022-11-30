@@ -17,13 +17,15 @@ $(document).ready(function () {
     return light;
   }
 
-  function makeCube() {
+  function makeCube(color, position_x) {
     const boxWidth = 1;
     const boxHeight = 1;
     const boxDepth = 1;
+
     const geometry = new THREE.BoxGeometry(boxWidth, boxHeight, boxDepth);
-    const material = new THREE.MeshPhongMaterial({ color: 0x44aa88 });
+    const material = new THREE.MeshPhongMaterial({ color });
     const cube = new THREE.Mesh(geometry, material);
+    cube.position.x = position_x;
     return cube;
   }
 
@@ -40,15 +42,24 @@ $(document).ready(function () {
 
     scene.add(light);
 
-    const cube = makeCube();
+    const cubes = [
+      makeCube(0x8844aa, -2),
+      makeCube(0x44aa88, 0),
+      makeCube(0xaa8844, 2),
+    ];
 
-    scene.add(cube);
+    cubes.forEach(function (cube) {
+      scene.add(cube);
+    });
 
     function animate(time) {
       time *= 0.001; // convert time to seconds
 
-      cube.rotation.x = time;
-      cube.rotation.y = time;
+      cubes.forEach(function (cube, index) {
+        const speed = index + 1;
+        cube.rotation.x = time * speed;
+        cube.rotation.y = time;
+      });
 
       renderer.render(scene, camera);
 
