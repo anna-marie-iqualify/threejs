@@ -1,11 +1,11 @@
 $(document).ready(function () {
   function makeCamera() {
-    const fov = 75; // field of view - perspectivce camera takes degrees.
-    const aspect = 2; // the canvas default
+    const fov = 40;
+    const aspect = 2;  // the canvas default
     const near = 0.1;
-    const far = 5;
+    const far = 1000;
     const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-    camera.position.z = 2;
+    camera.position.z = 120;
     return camera;
   }
 
@@ -48,20 +48,53 @@ $(document).ready(function () {
     const camera = makeCamera();
 
     const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0xAAAAAA);
 
     const light = makeLight();
 
     scene.add(light);
 
-    const cubes = [
-      makeCube(0x8844aa, -2),
-      makeCube(0x44aa88, 0),
-      makeCube(0xaa8844, 2),
-    ];
+    const objects = [];
+    const spread = 15;
+  
+    function addObject(x, y, obj) {
+      obj.position.x = x * spread;
+      obj.position.y = y * spread;
+  
+      scene.add(obj);
+      objects.push(obj);
+    }
 
-    cubes.forEach(function (cube) {
-      scene.add(cube);
-    });
+    function createMaterial() {
+      const material = new THREE.MeshPhongMaterial({
+        side: THREE.DoubleSide,
+      });
+  
+      const hue = Math.random();
+      const saturation = 1;
+      const luminance = .5;
+      material.color.setHSL(hue, saturation, luminance);
+  
+      return material;
+    }
+
+    function addSolidGeometry(x, y, geometry) {
+      const mesh = new THREE.Mesh(geometry, createMaterial());
+      addObject(x, y, mesh);
+    }
+  
+    function addLineGeometry(x, y, geometry) {
+      const material = new THREE.LineBasicMaterial({color: 0x000000});
+      const mesh = new THREE.LineSegments(geometry, material);
+      addObject(x, y, mesh);
+    }
+
+    {
+      const width = 8;
+      const height = 8;
+      const depth = 8;
+      addSolidGeometry(-2, 2, new THREE.BoxBufferGeometry(width, height, depth));
+    }
 
     function animate(time) {
       time *= 0.001; // convert time to seconds
@@ -73,10 +106,11 @@ $(document).ready(function () {
         camera.updateProjectionMatrix();
       }
 
-      cubes.forEach(function (cube, index) {
-        const speed = index + 1;
-        cube.rotation.x = time * speed;
-        cube.rotation.y = time;
+      objects.forEach((obj, ndx) => {
+        const speed = .1 + ndx * .05;
+        const rot = time * speed;
+        obj.rotation.x = rot;
+        obj.rotation.y = rot;
       });
 
       renderer.render(scene, camera);
