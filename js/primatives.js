@@ -42,7 +42,7 @@ $(document).ready(function () {
   }
 
   function main() {
-    const canvas = $("#scene").get(0);
+    const canvas = $("#primatives").get(0);
     const renderer = new THREE.WebGLRenderer({ canvas });
 
     const camera = makeCamera();

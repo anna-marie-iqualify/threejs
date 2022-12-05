@@ -17739,12 +17739,12 @@
 
 		function onContextLost(event) {
 			event.preventDefault();
-			console.log('THREE.WebGLRenderer: Context Lost.');
+			// console.log('THREE.WebGLRenderer: Context Lost.');
 			_isContextLost = true;
 		}
 		function /* event */
 		onContextRestore() {
-			console.log('THREE.WebGLRenderer: Context Restored.');
+			// console.log('THREE.WebGLRenderer: Context Restored.');
 			_isContextLost = false;
 			const infoAutoReset = info.autoReset;
 			const shadowMapEnabled = shadowMap.enabled;
@@ -19066,7 +19066,7 @@
 		}
 		toJSON(data) {
 			if (data === undefined) {
-				console.log('THREE.InterleavedBufferAttribute.toJSON(): Serializing an interleaved buffer attribute will deinterleave buffer data.');
+				// console.log('THREE.InterleavedBufferAttribute.toJSON(): Serializing an interleaved buffer attribute will deinterleave buffer data.');
 				const array = [];
 				for (let i = 0; i < this.count; i++) {
 					const index = i * this.data.stride + this.offset;
