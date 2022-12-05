@@ -5,7 +5,7 @@ $(document).ready(function () {
     const near = 0.1;
     const far = 1000;
     const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-    camera.position.z = 120;
+
     return camera;
   }
 
@@ -58,25 +58,57 @@ $(document).ready(function () {
     camera.lookAt(0, 0, 0);
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xaaaaaa);
 
-    const light = makeDirectionalLight();
-
-    scene.add(light);
+    const objects = [];
 
     // Adding characters
+    // make solarSystem
+    const solarSystem = new THREE.Object3D();
+    scene.add(solarSystem);
+    objects.push(solarSystem);
+
     // making the sun
-    const objects = [];
     const sunShape = makeSphere(1, 6);
     const sunMaterial = new THREE.MeshPhongMaterial({ emissive: 0xffff00 });
     const sunMesh = new THREE.Mesh(sunShape, sunMaterial);
 
     sunMesh.scale.set(5, 5, 5); // make the sun large
-    scene.add(sunMesh);
+    solarSystem.add(sunMesh);
     objects.push(sunMesh);
-
     const sunlight = makePointLight();
     scene.add(sunlight);
+
+    // making the earth orbit
+    const earthOrbit = new THREE.Object3D();
+    earthOrbit.position.x = 10;
+    solarSystem.add(earthOrbit);
+    objects.push(earthOrbit);
+
+    // making the earth
+    const earthShape = makeSphere(1, 6);
+    const earthMats = new THREE.MeshPhongMaterial({
+      color: 0x2233ff,
+      emissive: 0x112244,
+    });
+    const earthMesh = new THREE.Mesh(earthShape, earthMats);
+    objects.push(earthMesh);
+    earthOrbit.add(earthMesh);
+
+    // making the moon orbit
+    const moonOrbit = new THREE.Object3D();
+    moonOrbit.position.x = 2;
+    earthOrbit.add(moonOrbit);
+
+    // making the moon
+    const moonShape = makeSphere(1, 6);
+    const moonMats = new THREE.MeshPhongMaterial({
+      color: 0x888888,
+      emissive: 0x222222,
+    });
+    const moonMesh = new THREE.Mesh(moonShape, moonMats);
+    moonMesh.scale.set(0.5, 0.5, 0.5);
+    moonOrbit.add(moonMesh);
+    objects.push(moonMesh);
 
     function animate(time) {
       time *= 0.001; // convert time to seconds
