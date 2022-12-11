@@ -48,6 +48,38 @@ $(document).ready(function () {
     return sphereGeometry;
   }
 
+  // Turns both axes and grid visible on/off
+  // dat.GUI requires a property that returns a bool
+  // to decide to make a checkbox so we make a setter
+  // and getter for `visible` which we can tell dat.GUI
+  // to look at.
+  const gui = new dat.gui.GUI();
+  class AxisGridHelper {
+    constructor(node, units = 10) {
+      const axes = new THREE.AxesHelper();
+      axes.material.depthTest = false;
+      axes.renderOrder = 2; // after the grid
+      node.add(axes);
+
+      const grid = new THREE.GridHelper(units, units);
+      grid.material.depthTest = false;
+      grid.renderOrder = 1;
+      node.add(grid);
+
+      this.grid = grid;
+      this.axes = axes;
+      this.visible = false;
+    }
+    get visible() {
+      return this._visible;
+    }
+    set visible(v) {
+      this._visible = v;
+      this.grid.visible = v;
+      this.axes.visible = v;
+    }
+  }
+
   function main() {
     const canvas = $("#sun-earth-moon").get(0);
     const renderer = new THREE.WebGLRenderer({ canvas });
@@ -105,10 +137,23 @@ $(document).ready(function () {
       color: 0x888888,
       emissive: 0x222222,
     });
+
     const moonMesh = new THREE.Mesh(moonShape, moonMats);
     moonMesh.scale.set(0.5, 0.5, 0.5);
     moonOrbit.add(moonMesh);
     objects.push(moonMesh);
+
+    // make a grid
+    function makeAxisGrid(node, label, units) {
+      const helper = new AxisGridHelper(node, units);
+      gui.add(helper, "visible").name(label);
+    }
+
+    makeAxisGrid(solarSystem, "solarSystem", 25);
+    makeAxisGrid(sunMesh, "sunMesh");
+    makeAxisGrid(earthOrbit, "earthOrbit");
+    makeAxisGrid(earthMesh, "earthMesh");
+    makeAxisGrid(moonMesh, "moonMesh");
 
     function animate(time) {
       time *= 0.001; // convert time to seconds
