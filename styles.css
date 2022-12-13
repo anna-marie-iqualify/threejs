@@ -8,6 +8,11 @@ canvas {
   height: 100%;
 }
 
+nav {
+  display: flex;
+  justify-content: space-around;
+}
+
 .show {
   display: block;
 }
